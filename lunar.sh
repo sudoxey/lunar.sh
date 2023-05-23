@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# tweak
+powerprofilesctl set performance
+
+wget 'https://i.redd.it/4lwyz6n35yma1.png' -P "$HOME/Pictures/Wallpapers"
+gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Wallpapers/4lwyz6n35yma1.png"
+gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictures/Wallpapers/4lwyz6n35yma1.png"
 
 gsettings set org.gnome.desktop.interface clock-format '12h'
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-blue-dark'
+gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
 gsettings set org.gnome.desktop.interface show-battery-percentage 'true'
 gsettings set org.gnome.desktop.privacy hide-identity 'true'
 gsettings set org.gnome.desktop.privacy old-files-age 'uint32 0'
@@ -16,9 +20,9 @@ gsettings set org.gnome.desktop.privacy remove-old-trash-files 'true'
 gsettings set org.gnome.desktop.privacy report-technical-problems 'false'
 gsettings set org.gnome.desktop.privacy show-full-name-in-top-bar 'false'
 gsettings set org.gnome.desktop.session idle-delay '0'
-gsettings set org.gnome.mutter center-new-windows 'true'
 gsettings set org.gnome.nautilus.preferences show-create-link 'true'
 gsettings set org.gnome.nautilus.preferences show-delete-permanently 'true'
+gsettings set org.gnome.settings-daemon.plugins.power idle-dim 'false'
 gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action 'nothing'
 gsettings set org.gnome.settings-daemon.plugins.power lid-close-battery-action 'nothing'
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
@@ -26,7 +30,7 @@ gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windo
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop"]'
 
 tee -a "$HOME/.bashrc" > /dev/null << EOF
 bind '"\e[15~":"history -cw\C-mclear\C-m"'
@@ -34,10 +38,17 @@ PATH=$PATH:$HOME/.local/bin
 EOF
 source "$HOME/.bashrc"
 
+tee -a "$HOME/.config/gtk-3.0/gtk.css" > /dev/null <<EOF
+VteTerminal,
+TerminalScreen,
+vte-terminal {
+    padding: 10px;
+    -VteTerminal-inner-border: 10px;
+}
+EOF
+
 sudo tee -a '/etc/default/grub' > /dev/null <<< 'GRUB_RECORDFAIL_TIMEOUT=0'
 sudo update-grub
-
-# debloat
 
 sudo apt autoremove --purge -y \
     apport \
@@ -58,10 +69,6 @@ sudo apt autoremove --purge -y \
     whoopsie \
     yelp
 
-sudo snap remove firefox
-
-# hide
-
 cp \
     '/usr/share/applications/im-config.desktop' \
     '/usr/share/applications/gnome-language-selector.desktop' \
@@ -77,18 +84,8 @@ tee -a \
     "$HOME/.local/share/applications/software-properties-drivers.desktop" \
     <<< 'Hidden=true' > /dev/null
 
-# update
-
-wget https://dl.google.com/linux/linux_signing_key.pub -qO - | sudo gpg --dearmor -o /usr/share/keyrings/google.gpg
-sudo tee '/etc/apt/sources.list.d/google-chrome.list' > /dev/null <<< 'deb [arch=amd64 signed-by=/usr/share/keyrings/google.gpg] https://dl.google.com/linux/chrome/deb/ stable main'
-
-wget https://packages.microsoft.com/keys/microsoft.asc -qO - | sudo gpg --dearmor -o /usr/share/keyrings/microsoft.gpg
-sudo tee '/etc/apt/sources.list.d/vscode.list' > /dev/null <<< 'deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main'
-
 sudo apt update
 sudo apt full-upgrade -y
-
-# install
 
 if [[ $(sudo lshw -C display 2> /dev/null | grep vendor) =~ NVIDIA ]];
    then
@@ -97,13 +94,11 @@ fi
 
 sudo apt install -y \
     curl \
-    code \
     flatpak \
     git \
-    gnome-software-plugin-flatpak \
-    google-chrome-stable
+    gnome-software-plugin-flatpak
 
-# configure
+sudo snap install code --classic
 
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
@@ -146,13 +141,9 @@ tee "$HOME/.config/Code/User/settings.json" > /dev/null << EOF
 }
 EOF
 
-# clean
-
 rm -rf .wget-hsts
 sudo apt clean
 sudo apt autoclean &> /dev/null
 sudo apt autoremove --purge -y &> /dev/null
 
-# reboot
-
-sudo reboot
+reboot
