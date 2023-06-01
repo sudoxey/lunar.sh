@@ -20,6 +20,7 @@ gsettings set org.gnome.desktop.privacy remove-old-trash-files 'true'
 gsettings set org.gnome.desktop.privacy report-technical-problems 'false'
 gsettings set org.gnome.desktop.privacy show-full-name-in-top-bar 'false'
 gsettings set org.gnome.desktop.session idle-delay '0'
+gsettings set org.gnome.mutter center-new-windows 'true'
 gsettings set org.gnome.nautilus.preferences show-create-link 'true'
 gsettings set org.gnome.nautilus.preferences show-delete-permanently 'true'
 gsettings set org.gnome.settings-daemon.plugins.power idle-dim 'false'
@@ -30,7 +31,7 @@ gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windo
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code_code.desktop"]'
 
 tee -a "$HOME/.bashrc" > /dev/null << EOF
 bind '"\e[15~":"history -cw\C-mclear\C-m"'
@@ -98,6 +99,7 @@ sudo apt install -y \
     git \
     gnome-software-plugin-flatpak
 
+echo 'Installing Visual Studio Code (this will take awhile)...'
 sudo snap install code --classic
 
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
