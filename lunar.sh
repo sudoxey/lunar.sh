@@ -85,7 +85,7 @@ tee -a \
     "$HOME/.local/share/applications/software-properties-drivers.desktop" \
     <<< 'Hidden=true' > /dev/null
 
-curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
 sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
 sudo tee '/etc/apt/sources.list.d/vscode.list' > /dev/null <<< 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
 
