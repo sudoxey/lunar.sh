@@ -99,8 +99,7 @@ sudo apt install -y \
     git \
     gnome-software-plugin-flatpak
 
-echo 'Installing Visual Studio Code (this will take awhile)...'
-sudo snap install code --classic
+sudo snap install code --classic --devmode
 
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
