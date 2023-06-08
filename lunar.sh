@@ -85,6 +85,10 @@ tee -a \
     "$HOME/.local/share/applications/software-properties-drivers.desktop" \
     <<< 'Hidden=true' > /dev/null
 
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+sudo tee '/etc/apt/sources.list.d/vscode.list' > /dev/null <<< 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+
 sudo apt update
 sudo apt full-upgrade -y
 
@@ -94,13 +98,11 @@ if [[ $(sudo lshw -C display 2> /dev/null | grep vendor) =~ NVIDIA ]];
 fi
 
 sudo apt install -y \
+    code \
     curl \
     flatpak \
     git \
     gnome-software-plugin-flatpak
-
-echo 'Installing Visual Studio Code (this may take awhile) ...'
-sudo snap install code --classic
 
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
