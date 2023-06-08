@@ -9,7 +9,7 @@ gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictur
 gsettings set org.gnome.desktop.interface clock-format '12h'
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
-gsettings set org.gnome.desktop.interface show-battery-percentage 'true'
+# gsettings set org.gnome.desktop.interface show-battery-percentage 'true'
 gsettings set org.gnome.desktop.privacy hide-identity 'true'
 gsettings set org.gnome.desktop.privacy old-files-age 'uint32 0'
 gsettings set org.gnome.desktop.privacy recent-files-max-age '1'
@@ -27,6 +27,7 @@ gsettings set org.gnome.settings-daemon.plugins.power idle-dim 'false'
 gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action 'nothing'
 gsettings set org.gnome.settings-daemon.plugins.power lid-close-battery-action 'nothing'
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size '32'
 gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windows'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
@@ -106,6 +107,7 @@ sudo apt install -y \
 
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+code --install-extension ms-vscode.live-server
 sudo tee -a '/etc/sysctl.conf' > /dev/null <<< 'fs.inotify.max_user_watches = 524288'
 sudo sysctl -p > /dev/null
 mkdir -p "$HOME/.config/Code/User"
@@ -129,6 +131,7 @@ tee "$HOME/.config/Code/User/settings.json" > /dev/null << EOF
     "git.enabled": false,
     "html.autoClosingTags": false,
     "html.format.indentInnerHtml": true,
+    "livePreview.openPreviewTarget": "External Browser",
     "search.showLineNumbers": true,
     "security.workspace.trust.untrustedFiles": "open",
     "telemetry.telemetryLevel": "off",
@@ -141,7 +144,7 @@ tee "$HOME/.config/Code/User/settings.json" > /dev/null << EOF
     "workbench.editor.scrollToSwitchTabs": true,
     "workbench.editor.untitled.hint": "hidden",
     "workbench.list.smoothScrolling": true,
-    "workbench.startupEditor": "none",
+    "workbench.startupEditor": "none"
 }
 EOF
 
