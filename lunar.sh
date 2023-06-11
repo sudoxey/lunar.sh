@@ -50,7 +50,7 @@ echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null && s
 
 # Remove Firefox snap package and uninstall specified packages
 sudo snap remove firefox
-sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-disk-utility gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
 
 # Copy desktop files to local applications directory and set them as hidden
 cp '/usr/share/applications/gnome-language-selector.desktop' \
@@ -76,8 +76,8 @@ sudo apt update && sudo apt full-upgrade -y
 # Check if NVIDIA graphics card is detected and install the corresponding driver if found
 if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-525; fi
 
-# Install essential packages: Code, Curl, Flatpak, Git, GNOME Disk Utility, Flatpak plugin for GNOME Software, Google Chrome
-sudo apt install -y code curl flatpak git gnome-disk-utility gnome-software-plugin-flatpak google-chrome-stable
+# Install essential packages: Code, Curl, Flatpak, Git, Flatpak plugin for GNOME Software, Google Chrome
+sudo apt install -y code curl flatpak git gnome-software-plugin-flatpak google-chrome-stable
 
 # Add the Flathub repository for Flatpak if it doesn't exist already
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
