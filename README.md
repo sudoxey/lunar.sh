@@ -136,4 +136,4 @@ lunar.sh is licensed under the [MIT License](https://github.com/sudoxey/lunar.sh
 
 So, what are you waiting for? Join the lunar Lobster revolution and embrace a computing experience that's out of this world. Get ready to be moonstruck with lunar.sh!
 
-*Disclaimer: lunar.sh may cause an uncontrollable desire to explore the depths of the universe and inspire you to reach for the stars. Side effects may include increased productivity, enhanced creativity, and an insatiable appetite for lunar-themed snacks. Proceed with caution, and enjoy the lunar Lobster adventure responsibly.*
+*Disclaimer: lunar.sh may cause an uncontrollable desire to explore the depths of the universe and inspire you to reach for the stars. Side effects may include increased productivity, enhanced creativity, and an insatiable appetite for lunar-themed snacks. Proceed with caution, and enjoy the Lunar Lobster adventure responsibly.*
