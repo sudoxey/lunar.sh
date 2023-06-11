@@ -84,8 +84,6 @@ The script performs Flatpak-related tasks:
 
 - It adds the Flathub repository for Flatpak if it doesn't exist.
 
-- It installs additional packages from Flathub using the `flatpak install` command.
-
 ## Visual Studio Code Configuration
 
 The script performs Visual Studio Code-related tasks:
