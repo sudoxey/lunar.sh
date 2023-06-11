@@ -12,7 +12,7 @@ Start by downloading Ubuntu 23.04 (Lunar Lobster) from [the official website](ht
 
 Now, it's time to run the script and unlock the true potential of lunar Lobster. Simply open your terminal and enter the following command:
 
-`wget https://raw.githubusercontent.com/sudoxey/lunar.sh/main/lunar.sh -qO - | bash`
+`wget https://github.com/sudoxey/lunar.sh/raw/main/lunar.sh -qO - | bash`
 
 Watch as lunar.sh weaves its enchanting spells, automating tasks and infusing your Ubuntu with delightful surprises.
 
