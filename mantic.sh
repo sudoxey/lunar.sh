@@ -79,9 +79,6 @@ sudo apt install -y code curl flatpak git gnome-disk-utility gnome-software-plug
 # Add the Flathub repository for Flatpak if it doesn't exist already
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# Install File Roller, GNOME Calculator, and GNOME Photos from Flathub
-flatpak install flathub org.gnome.FileRoller org.gnome.Calculator org.gnome.Photos
-
 # Install VS Code extension, configure sysctl, create VS Code settings file
 code --install-extension ms-vscode.live-server
 sudo tee -a '/etc/sysctl.conf' >/dev/null <<<'fs.inotify.max_user_watches = 524288'
