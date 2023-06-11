@@ -56,10 +56,8 @@ gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 # Hide the 'Show Applications' button in the top bar
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
 # Set the favorite applications in the top bar
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "code.desktop"]'
 
-# Append the custom binding to clear history and clear the screen on F5 key press to the .bashrc file
-echo 'bind "\"\e[15~":"history -cw\C-mclear\C-m\""' >> "$HOME/.bashrc"
 # Append the specified path to the PATH variable in the .bashrc file
 echo 'PATH=$PATH:$HOME/.local/bin' >> "$HOME/.bashrc"
 # Reload the .bashrc file to apply the changes immediately
@@ -77,7 +75,8 @@ gsettings set org.gnome.desktop.background picture-uri-dark "$HOME/Pictures/Wall
 
 # Set GRUB_RECORDFAIL_TIMEOUT to 0 in /etc/default/grub and update the GRUB configuration
 # Note that changing this configuration may impact the ability to access alternate boot options, such as recovery mode or other operating systems, in case of a boot failure.
-sudo sed -i 's/GRUB_RECORDFAIL_TIMEOUT=.*/GRUB_RECORDFAIL_TIMEOUT=0/' /etc/default/grub && sudo update-grub
+sudo tee -a '/etc/default/grub' > /dev/null <<< 'GRUB_RECORDFAIL_TIMEOUT=0'
+sudo update-grub
 
 # Remove specific GNOME-related packages and their configuration files.
 sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-disk-utility gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
@@ -85,7 +84,20 @@ sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnom
 sudo snap remove firefox
 
 # Copy specified desktop files and append "Hidden=true" to them
-cp '/usr/share/applications/{im-config,gnome-language-selector,nm-connection-editor}.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications" && tee -a "$HOME/.local/share/applications/{im-config,gnome-language-selector,nm-connection-editor,snap-store_ubuntu-software,software-properties-drivers}.desktop" <<< 'Hidden=true' > /dev/null
+cp \
+    '/usr/share/applications/im-config.desktop' \
+    '/usr/share/applications/gnome-language-selector.desktop' \
+    '/usr/share/applications/nm-connection-editor.desktop' \
+    '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' \
+    '/usr/share/applications/software-properties-drivers.desktop' \
+    "$HOME/.local/share/applications"
+tee -a \
+    "$HOME/.local/share/applications/im-config.desktop" \
+    "$HOME/.local/share/applications/gnome-language-selector.desktop" \
+    "$HOME/.local/share/applications/nm-connection-editor.desktop" \
+    "$HOME/.local/share/applications/snap-store_ubuntu-software.desktop" \
+    "$HOME/.local/share/applications/software-properties-drivers.desktop" \
+    <<< 'Hidden=true' > /dev/null
 
 # Import Google Chrome GPG key, move it to the trusted GPG directory, and add the Google Chrome repository
 wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/google-chrome.gpg > /dev/null
@@ -99,7 +111,7 @@ sudo tee /etc/apt/sources.list.d/vscode.list > /dev/null <<< 'deb [arch=amd64] h
 sudo apt update && sudo apt full-upgrade -y
 
 # Check if NVIDIA graphics card is detected and install the corresponding driver if found
-if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver; fi
+if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-525; fi
 
 # Install essential packages: Code, Curl, Flatpak, Git, GNOME Disk Utility, Flatpak plugin for GNOME Software, Google Chrome
 sudo apt install -y code curl flatpak git gnome-disk-utility gnome-software-plugin-flatpak google-chrome-stable
@@ -107,8 +119,8 @@ sudo apt install -y code curl flatpak git gnome-disk-utility gnome-software-plug
 # Add the Flathub repository for Flatpak if it doesn't exist already
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# Install File Roller, GNOME Calculator, and Eye of GNOME from Flathub
-flatpak install flathub org.gnome.FileRoller org.gnome.Calculator org.gnome.EyeOfGnome
+# Install File Roller and GNOME Calculator from Flathub
+flatpak install flathub org.gnome.FileRoller org.gnome.Calculator
 
 # Install VS Code extension, configure sysctl, create VS Code settings file
 code --install-extension ms-vscode.live-server
