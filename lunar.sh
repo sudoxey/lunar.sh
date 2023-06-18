@@ -33,60 +33,38 @@ gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org
 # Add a custom key binding for clearing history and screen in the user's bashrc file
 echo 'bind '"'"'"\e[15~":"history -cw\C-mclear\C-m"'"'"'' >>$HOME/.bashrc
 
-# Add local bin directory to the PATH in the user's bashrc file
-echo "PATH=$PATH:$HOME/.local/bin" >>$HOME/.bashrc
-
-# Add custom CSS rule to GTK configuration file
-echo 'VteTerminal, TerminalScreen, vte-terminal { padding: 10px; -VteTerminal-inner-border: 10px; }' >>$HOME/.config/gtk-3.0/gtk.css
-
 # Download a wallpaper image and set it as the desktop background
-WALLPAPER="https://r4.wallpaperflare.com/wallpaper/384/818/513/himalayas-mountains-landscape-nature-wallpaper-6826fde8a0307cb8800cf11ed822d47a.jpg"
-wget -qP $HOME/Pictures/Wallpapers "$WALLPAPER"
-gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
-gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
+WALLPAPER="https://i.redd.it/wphlh5f5xuc81.png"; wget -qP $HOME/Pictures/Wallpapers "$WALLPAPER" && gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")" && gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
 
 # Set GRUB_RECORDFAIL_TIMEOUT to 0 and update GRUB configuration
 echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null && sudo update-grub
 
 # Remove Firefox snap package and uninstall specified packages
-sudo snap remove firefox
-sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+sudo snap remove firefox; sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
 
 # Copy desktop files to local applications directory and set them as hidden
-cp '/usr/share/applications/gnome-language-selector.desktop' \
-  '/usr/share/applications/nm-connection-editor.desktop' \
-  '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' \
-  '/usr/share/applications/software-properties-drivers.desktop' \
-  "$HOME/.local/share/applications/"
-for FILE in "$HOME/.local/share/applications/"*.desktop; do
-  echo 'Hidden=true' >>"$FILE"
-done
+cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/" && for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
 
 # Import Google Chrome GPG key, move it to the trusted GPG directory, and add the Google Chrome repository
-wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/google-chrome.gpg >/dev/null
-sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
+wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/google-chrome.gpg >/dev/null && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
 
 # Import Microsoft GPG key, move it to trusted GPG directory, and add Visual Studio Code repository
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null
-sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
 
 # Update package lists and perform a full system upgrade
 sudo apt update && sudo apt full-upgrade -y
 
 # Check if NVIDIA graphics card is detected and install the corresponding driver if found
-if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-525; fi
+if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-530; fi
 
 # Install essential packages: Code, Curl, Flatpak, Git, Flatpak plugin for GNOME Software, Google Chrome
-sudo apt install -y code curl flatpak git gnome-software-plugin-flatpak google-chrome-stable
+sudo apt install -y code flatpak gnome-software-plugin-flatpak google-chrome-stable
 
 # Add the Flathub repository for Flatpak if it doesn't exist already
 sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 # Install VS Code extension, configure sysctl, create VS Code settings file
-code --install-extension ms-vscode.live-server
-sudo tee -a '/etc/sysctl.conf' >/dev/null <<<'fs.inotify.max_user_watches = 524288'
-sudo sysctl -p >/dev/null
-mkdir -p "$HOME/.config/Code/User"
+code --install-extension ms-vscode.live-server && sudo tee -a '/etc/sysctl.conf' >/dev/null <<<'fs.inotify.max_user_watches = 524288' && sudo sysctl -p >/dev/null && mkdir -p "$HOME/.config/Code/User"
 tee "$HOME/.config/Code/User/settings.json" >/dev/null <<EOF
 {
   "editor.acceptSuggestionOnEnter": "off",
@@ -107,7 +85,6 @@ tee "$HOME/.config/Code/User/settings.json" >/dev/null <<EOF
   "git.enabled": false,
   "html.autoClosingTags": false,
   "html.format.indentInnerHtml": true,
-  "livePreview.openPreviewTarget": "External Browser",
   "search.showLineNumbers": true,
   "security.workspace.trust.untrustedFiles": "open",
   "telemetry.telemetryLevel": "off",
