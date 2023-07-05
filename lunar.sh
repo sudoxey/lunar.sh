@@ -1,7 +1,7 @@
 # Set the power profile to "performance" using powerprofilesctl
 powerprofilesctl set performance
 
-# Tweak various aspects of the GNOME desktop environment in the dconf settings database.
+# Tweak various aspects of the GNOME desktop environment in the dconf settings database
 gsettings set org.gnome.desktop.interface clock-format '12h'
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
@@ -28,9 +28,9 @@ gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windo
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code.desktop"]'
 
-# Add a custom key binding for clearing history and screen in the user's bashrc file
+# Add a custom F5 key binding for clearing history and screen in the user's bashrc file
 echo 'bind '"'"'"\e[15~":"history -cw\C-mclear\C-m"'"'"'' >>$HOME/.bashrc
 
 # Download a wallpaper image and set it as the desktop background
@@ -39,14 +39,11 @@ WALLPAPER="https://i.redd.it/wphlh5f5xuc81.png"; wget -qP $HOME/Pictures/Wallpap
 # Set GRUB_RECORDFAIL_TIMEOUT to 0 and update GRUB configuration
 echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null && sudo update-grub
 
-# Remove Firefox snap package and uninstall specified packages
-sudo snap remove firefox; sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+# Remove and uninstall specified packages
+sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
 
 # Copy desktop files to local applications directory and set them as hidden
 cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/" && for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
-
-# Import Google Chrome GPG key, move it to the trusted GPG directory, and add the Google Chrome repository
-wget -qO- https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/google-chrome.gpg >/dev/null && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main'
 
 # Import Microsoft GPG key, move it to trusted GPG directory, and add Visual Studio Code repository
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
@@ -55,48 +52,29 @@ wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | su
 sudo apt update && sudo apt full-upgrade -y
 
 # Check if NVIDIA graphics card is detected and install the corresponding driver if found
-if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-530; fi
+if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-535; fi
 
-# Install essential packages: Code, Curl, Flatpak, Git, Flatpak plugin for GNOME Software, Google Chrome
-sudo apt install -y code flatpak gnome-software-plugin-flatpak google-chrome-stable
+# Install essential packages: Node.js, Code, Flatpak, and Flatpak plugin for GNOME Software
+sudo snap install node --channel=20/stable --classic && sudo apt install -y code flatpak gnome-software-plugin-flatpak
 
-# Add the Flathub repository for Flatpak if it doesn't exist already
-sudo flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+# Add the Flathub repository for Flatpak
+sudo flatpak remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# Install VS Code extension, configure sysctl, create VS Code settings file
+# Install VS Code extension, configure sysctl, and create VS Code settings file
 code --install-extension ms-vscode.live-server && sudo tee -a '/etc/sysctl.conf' >/dev/null <<<'fs.inotify.max_user_watches = 524288' && sudo sysctl -p >/dev/null && mkdir -p "$HOME/.config/Code/User"
 tee "$HOME/.config/Code/User/settings.json" >/dev/null <<EOF
 {
   "editor.acceptSuggestionOnEnter": "off",
-  "editor.cursorBlinking": "phase",
-  "editor.cursorWidth": 2,
-  "editor.matchBrackets": "never",
-  "editor.renderWhitespace": "all",
-  "editor.smoothScrolling": true,
-  "editor.wordBasedSuggestions": false,
-  "explorer.confirmDelete": false,
-  "explorer.confirmDragAndDrop": false,
-  "extensions.closeExtensionDetailsOnViewChange": true,
-  "extensions.ignoreRecommendations": true,
   "files.autoSave": "afterDelay",
-  "files.enableTrash": false,
+  "files.autoSaveDelay": 0,
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
-  "git.enabled": false,
-  "html.autoClosingTags": false,
-  "html.format.indentInnerHtml": true,
-  "search.showLineNumbers": true,
+  "livePreview.notifyOnOpenLooseFile": false,
   "security.workspace.trust.untrustedFiles": "open",
   "telemetry.telemetryLevel": "off",
   "terminal.integrated.cursorBlinking": true,
-  "terminal.integrated.cursorStyle": "line",
-  "terminal.integrated.cursorWidth": 2,
-  "window.newWindowDimensions": "maximized",
   "window.titleBarStyle": "custom",
-  "window.titleSeparator": " — ",
-  "workbench.editor.scrollToSwitchTabs": true,
   "workbench.editor.untitled.hint": "hidden",
-  "workbench.list.smoothScrolling": true,
   "workbench.startupEditor": "none"
 }
 EOF
