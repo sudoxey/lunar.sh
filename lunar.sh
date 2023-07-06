@@ -28,7 +28,7 @@ gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windo
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "code.desktop"]'
 
 # Add a custom F5 key binding for clearing history and screen in the user's bashrc file
 echo 'bind '"'"'"\e[15~":"history -cw\C-mclear\C-m"'"'"'' >>$HOME/.bashrc
@@ -39,8 +39,11 @@ WALLPAPER="https://i.redd.it/wphlh5f5xuc81.png"; wget -qP $HOME/Pictures/Wallpap
 # Set GRUB_RECORDFAIL_TIMEOUT to 0 and update GRUB configuration
 echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null && sudo update-grub
 
-# Remove and uninstall specified packages
+# Remove specific GNOME-related packages and their configuration files.
 sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+
+# Remove Firefox Snap package
+sudo snap remove firefox
 
 # Copy desktop files to local applications directory and set them as hidden
 cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/" && for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
@@ -65,15 +68,29 @@ code --install-extension ms-vscode.live-server && sudo tee -a '/etc/sysctl.conf'
 tee "$HOME/.config/Code/User/settings.json" >/dev/null <<EOF
 {
   "editor.acceptSuggestionOnEnter": "off",
+  "editor.matchBrackets": "never",
+  "editor.renderWhitespace": "all",
+  "editor.wordBasedSuggestions": false,
+  "explorer.confirmDelete": false,
+  "explorer.confirmDragAndDrop": false,
+  "extensions.closeExtensionDetailsOnViewChange": true,
+  "extensions.ignoreRecommendations": true,
   "files.autoSave": "afterDelay",
   "files.autoSaveDelay": 0,
+  "files.enableTrash": false,
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
+  "git.enabled": false,
+  "html.format.indentInnerHtml": true,
   "livePreview.notifyOnOpenLooseFile": false,
+  "search.showLineNumbers": true,
   "security.workspace.trust.untrustedFiles": "open",
   "telemetry.telemetryLevel": "off",
   "terminal.integrated.cursorBlinking": true,
+  "window.newWindowDimensions": "maximized",
   "window.titleBarStyle": "custom",
+  "window.titleSeparator": " — ",
+  "workbench.editor.scrollToSwitchTabs": true,
   "workbench.editor.untitled.hint": "hidden",
   "workbench.startupEditor": "none"
 }
