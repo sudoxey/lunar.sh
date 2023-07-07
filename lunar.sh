@@ -48,8 +48,10 @@ sudo snap remove firefox
 # Copy desktop files to local applications directory and set them as hidden
 cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/" && for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
 
-# Import Microsoft GPG key, move it to trusted GPG directory, and add Visual Studio Code repository
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg >/dev/null && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main'
+# Import keys to trusted GPG directory and add respective repositories
+wget -qO- https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/google.gpg && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main'
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/microsoft.gpg && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main'
+wget -qO- https://mariadb.org/mariadb_release_signing_key.pgp | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/mariadb.gpg && sudo tee /etc/apt/sources.list.d/mariadb.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg] https://deb.mariadb.org/11.0/ubuntu lunar main'
 
 # Update package lists and perform a full system upgrade
 sudo apt update && sudo apt full-upgrade -y
