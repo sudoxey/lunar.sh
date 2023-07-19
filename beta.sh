@@ -22,32 +22,31 @@ gsettings set org.gnome.settings-daemon.plugins.power lid-close-ac-action 'nothi
 gsettings set org.gnome.settings-daemon.plugins.power lid-close-battery-action 'nothing'
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
 gsettings set org.gnome.shell.extensions.dash-to-dock dash-max-icon-size '24'
-gsettings set org.gnome.shell.extensions.dash-to-dock dock-position 'BOTTOM'
 gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windows'
-gsettings set org.gnome.shell.extensions.dash-to-dock show-apps-at-top 'true'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "code.desktop"]'
 
 echo 'bind '"'"'"\e[15~":"history -cw\C-mclear\C-m"'"'"'' >>$HOME/.bashrc
 
 WALLPAPER="https://i.redd.it/wphlh5f5xuc81.png"; wget -qP $HOME/Pictures/Wallpapers "$WALLPAPER" && gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")" && gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
 
-sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null && sudo update-grub
 
-sudo snap remove firefox
+sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
 
 cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/" && for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
 
-wget -qO- https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/google.gpg && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main'
+# wget -qO- https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/google.gpg && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main'
+# wget -qO- https://mariadb.org/mariadb_release_signing_key.pgp | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/mariadb.gpg && sudo tee /etc/apt/sources.list.d/mariadb.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg] https://deb.mariadb.org/11.0/ubuntu lunar main'
 wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/microsoft.gpg && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main'
 
 sudo apt update && sudo apt full-upgrade -y
 
 if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-535; fi
 
-sudo apt install -y code flatpak gnome-software-plugin-flatpak google-chrome-stable python3-venv
+sudo snap install node --channel=20/stable --classic && sudo apt install -y code flatpak gnome-software-plugin-flatpak
 
 sudo flatpak remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
 
