@@ -26,7 +26,7 @@ gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windo
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code.desktop"]'
 
 echo 'bind '"'"'"\e[15~":"history -cw\C-mclear\C-m"'"'"'' >>$HOME/.bashrc
 
