@@ -1,5 +1,7 @@
+# Set the power profile to "performance" mode
 powerprofilesctl set performance
 
+# Configure GNOME desktop interface settings
 gsettings set org.gnome.desktop.interface clock-format '12h'
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme 'Yaru-dark'
@@ -26,30 +28,48 @@ gsettings set org.gnome.shell.extensions.dash-to-dock scroll-action 'cycle-windo
 gsettings set org.gnome.shell.extensions.dash-to-dock show-mounts 'false'
 gsettings set org.gnome.shell.extensions.dash-to-dock show-trash 'false'
 gsettings set org.gnome.shell.extensions.ding show-home 'false'
-gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "firefox_firefox.desktop", "code.desktop"]'
+gsettings set org.gnome.shell favorite-apps '["org.gnome.Terminal.desktop", "org.gnome.Nautilus.desktop", "google-chrome.desktop", "code.desktop"]'
 
+# Add a custom key binding to clear history and terminal
 echo 'bind '"'"'"\e[15~":"history -cw\C-mclear\C-m"'"'"'' >>$HOME/.bashrc
 
-WALLPAPER="https://i.redd.it/wphlh5f5xuc81.png"; wget -qP $HOME/Pictures/Wallpapers "$WALLPAPER" && gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")" && gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
+# Set the wallpaper using wget and update GNOME desktop background settings
+# WALLPAPER="https://i.redd.it/fw4zu8myq3cb1.jpg"
+WALLPAPER="https://i.redd.it/n4y6iam5w2hb1.png"
+wget -qP $HOME/Pictures/Wallpapers "$WALLPAPER"
+gsettings set org.gnome.desktop.background picture-uri "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
+gsettings set org.gnome.desktop.background picture-uri-dark "file://$HOME/Pictures/Wallpapers/$(basename "$WALLPAPER")"
 
-echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null && sudo update-grub
+# Update GRUB configuration to hide the boot selection menu and accelerate the startup process
+echo "GRUB_RECORDFAIL_TIMEOUT=0" | sudo tee -a /etc/default/grub >/dev/null
+sudo update-grub
 
-sudo apt autoremove --purge -y apport eog gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor gnome-text-editor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+# Remove specified packages and snaps
+sudo apt autoremove --purge -y apport eog gedit gnome-calculator gnome-characters gnome-font-viewer gnome-logs gnome-power-manager gnome-startup-applications gnome-system-monitor libevdocument3-4 seahorse ubuntu-report vim-common whoopsie yelp
+sudo snap remove firefox
 
-cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/" && for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
+# Copy and modify desktop files to hide certain applications
+cp '/usr/share/applications/gnome-language-selector.desktop' '/usr/share/applications/nm-connection-editor.desktop' '/var/lib/snapd/desktop/applications/snap-store_ubuntu-software.desktop' '/usr/share/applications/software-properties-drivers.desktop' "$HOME/.local/share/applications/"
+for FILE in "$HOME/.local/share/applications/"*.desktop; do echo 'Hidden=true' >>"$FILE"; done
 
-# wget -qO- https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/google.gpg && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main'
-# wget -qO- https://mariadb.org/mariadb_release_signing_key.pgp | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/mariadb.gpg && sudo tee /etc/apt/sources.list.d/mariadb.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg] https://deb.mariadb.org/11.0/ubuntu lunar main'
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/microsoft.gpg && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main'
+# Add repositories for Google Chrome and Visual Studio Code
+wget -qO- https://dl.google.com/linux/linux_signing_key.pub | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/google.gpg && sudo tee /etc/apt/sources.list.d/google-chrome.list >/dev/null <<<'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/google.gpg] http://dl.google.com/linux/chrome/deb/ stable main'
+# wget -qO- https://mariadb.org/mariadb_release_signing_key.pgp | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/mariadb.gpg && sudo tee /etc/apt/sources.list.d/mariadb.list >/dev/null <<<'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/mariadb.gpg] https://deb.mariadb.org/11.0/ubuntu jammy main'
+wget -qO- https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor --output /etc/apt/trusted.gpg.d/microsoft.gpg && sudo tee /etc/apt/sources.list.d/vscode.list >/dev/null <<<'deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/microsoft.gpg] https://packages.microsoft.com/repos/vscode stable main'
 
+# Update system packages
 sudo apt update && sudo apt full-upgrade -y
 
+# Install NVIDIA driver if an NVIDIA graphics card is detected
 if sudo lshw -C display 2>/dev/null | grep -q "NVIDIA"; then sudo apt install -y nvidia-driver-535; fi
 
-sudo snap install node --channel=20/stable --classic && sudo apt install -y code flatpak gnome-software-plugin-flatpak
+# Install software using snap and apt
+sudo snap install node --channel=20/stable --classic && sudo apt install -y code curl flatpak google-chrome-stable gnome-software-plugin-flatpak timeshift
 
+# Add Flatpak repository for Flathub
 sudo flatpak remote-add flathub https://flathub.org/repo/flathub.flatpakrepo
 
+# Configure Visual Studio Code settings and extensions
 code --install-extension ms-vscode.live-server && sudo tee -a '/etc/sysctl.conf' >/dev/null <<<'fs.inotify.max_user_watches = 524288' && sudo sysctl -p >/dev/null && mkdir -p "$HOME/.config/Code/User"
 tee "$HOME/.config/Code/User/settings.json" >/dev/null <<EOF
 {
@@ -81,6 +101,6 @@ tee "$HOME/.config/Code/User/settings.json" >/dev/null <<EOF
 }
 EOF
 
+# Clean up and reboot the system
 rm -rf .wget-hsts && sudo apt clean && sudo apt autoclean &>/dev/null && sudo apt autoremove --purge -y &>/dev/null
-
 reboot
